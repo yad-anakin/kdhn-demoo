@@ -1,7 +1,13 @@
-const express = require('express');
-const path = require('path');
-const cors = require('cors');
-const dotenv = require('dotenv');
+import express from 'express';
+import path from 'path';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// Get current file path in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Load environment variables if .env exists
 dotenv.config();
@@ -12,8 +18,22 @@ const port = process.env.PORT || 3000;
 // Enable CORS
 app.use(cors());
 
-// Serve static files
-app.use(express.static(path.join(__dirname, '.')));
+// Set proper MIME types for JavaScript modules
+app.use((req, res, next) => {
+    if (req.url.endsWith('.js')) {
+        res.type('application/javascript');
+    }
+    next();
+});
+
+// Serve static files with proper MIME types
+app.use(express.static(path.join(__dirname, '.'), {
+    setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        }
+    }
+}));
 
 // Optional route to check current environment variables (for debugging)
 app.get('/env-check', (req, res) => {
