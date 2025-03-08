@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Message Limits</title>
+    <link rel="stylesheet" href="adminPanel.css">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <div id="loginSection">
+            <h1>Admin Login</h1>
+            <div class="login-form">
+                <input type="email" id="adminEmail" placeholder="Admin Email" value="yadvader88@gmail.com" readonly />
+                <input type="password" id="adminPassword" placeholder="Password" />
+                <button id="loginBtn">Login</button>
+                <p id="loginError" class="error-message"></p>
+            </div>
+        </div>
+
+        <div id="adminSection" style="display: none;">
+            <header>
+                <h1>Admin Panel</h1>
+                <div class="admin-header">
+                    <p id="adminInfo"></p>
+                    <button id="logoutBtn">Logout</button>
+                </div>
+            </header>
+            
+            <main>
+                <section class="user-limits">
+                    <h2>User Message Limits</h2>
+                    <div class="user-list" id="userList">
+                        <!-- Users will be populated here -->
+                        <div class="loading">Loading users...</div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Load admin-specific scripts -->
+    <script type="module" src="adminFirebase.js"></script>
+    <script type="module" src="adminPanel.js"></script>
+</body>
+</html> 

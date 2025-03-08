@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tandrustica</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dark-theme.css">
+    <link rel="icon" type="image/x-icon" href="Untitlhhhed-1.png">
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar-overlay"></div>
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <img src="both-logo.png" alt="ChatGPT Clone Logo" class="logo">
+                </div>
+                <button class="new-chat">
+                    <i class="fas fa-plus"></i>
+                    <span>New chat</span>
+                </button>
+                <button class="close-sidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="models-list">
+                <h3><i class="fas fa-robot"></i> AI Agents</h3>
+                <div class="model-item active" data-agent="med-info">
+                    <i class="fas fa-stethoscope"></i>
+                    <div class="model-info">
+                        <span>Med Info</span>
+                        <small>General medical information</small>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="model-item" data-agent="med-calculator">
+                    <i class="fas fa-calculator"></i>
+                    <div class="model-info">
+                        <span>Med Calculator</span>
+                        <small>Medical calculations & metrics</small>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="user-section">
+                <!-- Login/Signup Section (shown when logged out) -->
+                <div class="auth-section" id="authSection">
+                    <button class="login-btn" id="showLoginBtn">
+                        <i class="fas fa-user"></i>
+                        Sign In
+                    </button>
+                </div>
+
+                <!-- User Profile Section (shown when logged in) -->
+                <div class="user-profile" id="userProfile" style="display: none;">
+                    <div class="profile-header">
+                        <img id="userAvatar" src="default-avatar.png" alt="User" class="user-avatar">
+                        <div class="user-info">
+                            <span id="userName">User Name</span>
+                            <small id="userEmail">user@example.com</small>
+                        </div>
+                        <button class="edit-profile-btn" id="editProfileBtn">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                    <button class="sign-out-btn" id="signOutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="chat-container" data-current-agent="med-info">
+            <div class="chat-header">
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-content">
+                    <h2>Medical Assistant</h2>
+                    <small>General medical information</small>
+                </div>
+            </div>
+            
+            <div class="chat-messages">
+                <div class="welcome-message">
+                    <h1>Medical AI Assistant</h1>
+                    <p>How can I help you today?</p>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="chat-input-box">
+                    <textarea 
+                        id="userInput" 
+                        placeholder="Message Medical AI..."
+                        rows="1"
+                    ></textarea>
+                    <button class="send-button" title="Send message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add modal templates -->
+    <div class="auth-modal" id="authModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="alone-logo-w.png" alt="Logo" class="auth-logo">
+                <button class="close-modal" data-modal="authModal">&times;</button>
+            </div>
+            <div class="auth-container">
+                <h2>Welcome Back</h2>
+                <p class="auth-subtitle">Choose your sign in method</p>
+                
+                <button class="auth-btn google" id="googleSignInBtn">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                    Continue with Google
+                </button>
+                
+                <div class="auth-divider">
+                    <span>or</span>
+                </div>
+                
+                <button class="auth-btn email" id="emailSignInBtn">
+                    <i class="fas fa-envelope"></i>
+                    Sign in with Email
+                </button>
+                
+                <p class="auth-footer">
+                    New to Tandrustica? <button class="text-btn" id="showSignUpBtn">Create account</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-modal" id="signInModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Sign In</h2>
+                <button class="close-modal" data-modal="signInModal">&times;</button>
+            </div>
+            <form id="signInForm">
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="submit-btn">Sign In</button>
+                <div class="auth-footer">
+                    <button type="button" id="forgotPasswordBtn" class="text-btn">Forgot Password?</button>
+                </div>
+            </form>
+            <div class="auth-footer">
+                Don't have an account? 
+                <button id="switchToSignUp" class="text-btn">Sign Up</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-modal" id="signUpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="alone-logo-w.png" alt="Logo" class="auth-logo">
+                <button class="close-modal" data-modal="signUpModal">&times;</button>
+            </div>
+            <div class="auth-container">
+                <h2>Create Account</h2>
+                <p class="auth-subtitle">Join Tandrustica today</p>
+                
+                <form id="signUpForm">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="Full Name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Password" required minlength="6">
+                    </div>
+                    <button type="submit" class="submit-btn">Create Account</button>
+                </form>
+                
+                <p class="auth-footer">
+                    Already have an account? <button class="text-btn" id="showSignInBtn">Sign in</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update the edit profile modal -->
+    <div class="auth-modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Profile</h2>
+                <button class="close-modal" data-modal="editProfileModal">&times;</button>
+            </div>
+            <form id="editProfileForm">
+                <div class="profile-pic-upload">
+                    <img id="profilePreview" src="default-avatar.png" alt="Profile">
+                    <label for="profilePicInput" class="upload-btn">
+                        <i class="fas fa-camera"></i>
+                        Change Photo
+                    </label>
+                    <input type="file" id="profilePicInput" accept="image/*" style="display: none">
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="editName" placeholder="Name" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="editEmail" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="editPassword" placeholder="New Password (optional)">
+                </div>
+                <button type="submit" class="submit-btn">Save Changes</button>
+            </form>
+            <div class="delete-account-section">
+                <p>⚠️ Danger Zone</p>
+                <p style="color: #666;">Once you delete your account, there is no going back. Please be certain.</p>
+                <button type="button" id="deleteAccountBtn" class="delete-account-btn">Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add password reset modal -->
+    <div class="auth-modal" id="resetPasswordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Reset Password</h2>
+                <button class="close-modal" data-modal="resetPasswordModal">&times;</button>
+            </div>
+            <form id="resetPasswordForm">
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" placeholder="Enter your email" required>
+                </div>
+                <button type="submit" class="submit-btn">Send Reset Link</button>
+            </form>
+            <div class="auth-footer">
+                <button id="backToSignIn" class="text-btn">Back to Sign In</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add toast container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="utils.js"></script>
+    <script type="module" src="main.js"></script>
+    <script type="module" src="agents/medInfo.js"></script>
+    <script type="module" src="agents/medCalculator.js"></script>
+    <script type="module">
+        import { app, auth, db } from './config/firebase.js';
+    </script>
+</body>
+</html>
