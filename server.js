@@ -12,8 +12,17 @@ const port = process.env.PORT || 3000;
 // Enable CORS
 app.use(cors());
 
-// Serve static files
-app.use(express.static(path.join(__dirname, '.')));
+// Serve static files with proper MIME types
+app.use(express.static(path.join(__dirname, '.'), {
+    setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        }
+        if (path.endsWith('.mjs') || path.match(/\.js$/)) {
+            res.setHeader('Content-Type', 'application/javascript');
+        }
+    }
+}));
 
 // Optional route to check current environment variables (for debugging)
 app.get('/env-check', (req, res) => {
