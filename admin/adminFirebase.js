@@ -1,4 +1,4 @@
-import { adminFirebaseConfig, firebaseConfig } from '../config.js';
+import { adminFirebaseConfig, firebaseConfig } from '../config/config.js';
 
 // Admin email constant
 const ADMIN_EMAIL = 'yadvader88@gmail.com';
