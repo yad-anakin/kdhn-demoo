@@ -18,22 +18,31 @@ const port = process.env.PORT || 3000;
 // Enable CORS
 app.use(cors());
 
-// Set proper MIME types for JavaScript modules
-app.use((req, res, next) => {
-    if (req.url.endsWith('.js')) {
-        res.type('application/javascript');
-    }
+// Serve JavaScript files with correct MIME type
+app.get('*.js', (req, res, next) => {
+    res.set('Content-Type', 'application/javascript');
     next();
 });
 
-// Serve static files with proper MIME types
+// Serve static files
 app.use(express.static(path.join(__dirname, '.'), {
-    setHeaders: (res, path) => {
-        if (path.endsWith('.js')) {
-            res.setHeader('Content-Type', 'application/javascript');
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.js')) {
+            res.set('Content-Type', 'application/javascript');
         }
     }
 }));
+
+// Handle specific routes for config files
+app.get('/config.js', (req, res) => {
+    res.set('Content-Type', 'application/javascript');
+    res.sendFile(path.join(__dirname, 'config.js'));
+});
+
+app.get('/config/firebase.js', (req, res) => {
+    res.set('Content-Type', 'application/javascript');
+    res.sendFile(path.join(__dirname, 'config/firebase.js'));
+});
 
 // Optional route to check current environment variables (for debugging)
 app.get('/env-check', (req, res) => {
@@ -46,7 +55,7 @@ app.get('/env-check', (req, res) => {
     });
 });
 
-// Handle all routes by serving index.html
+// Handle all other routes by serving index.html
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });

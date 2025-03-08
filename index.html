@@ -267,11 +267,10 @@
     <div id="toastContainer" class="toast-container"></div>
 
     <script src="utils.js"></script>
+    <script type="module" src="config.js"></script>
     <script type="module" src="main.js"></script>
     <script type="module" src="agents/medInfo.js"></script>
     <script type="module" src="agents/medCalculator.js"></script>
-    <script type="module">
-        import { app, auth, db } from './config/firebase.js';
-    </script>
+    <script type="module" src="config/firebase.js"></script>
 </body>
 </html>
