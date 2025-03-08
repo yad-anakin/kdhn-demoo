@@ -1,4 +1,4 @@
-import { config } from '../config/config.js';
+import { config } from '../config.js';
 import { SYSTEM_PROMPT as MED_INFO_PROMPT } from '../prompts/medInfoPrompts.js';
 import { SYSTEM_PROMPT as MED_CALC_PROMPT } from '../prompts/medCalculatorPrompts.js';
 
