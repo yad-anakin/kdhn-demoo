@@ -14,15 +14,18 @@ app.use(cors());
 
 // Serve static files with proper MIME types
 app.use(express.static(path.join(__dirname, '.'), {
-    setHeaders: (res, path) => {
-        if (path.endsWith('.js')) {
-            res.setHeader('Content-Type', 'application/javascript');
-        }
-        if (path.endsWith('.mjs') || path.match(/\.js$/)) {
-            res.setHeader('Content-Type', 'application/javascript');
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.js') || filePath.endsWith('.mjs')) {
+            res.set('Content-Type', 'application/javascript');
         }
     }
 }));
+
+// Serve JavaScript files explicitly
+app.get('*.js', (req, res, next) => {
+    res.set('Content-Type', 'application/javascript');
+    next();
+});
 
 // Optional route to check current environment variables (for debugging)
 app.get('/env-check', (req, res) => {
