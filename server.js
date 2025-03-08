@@ -1,13 +1,7 @@
-import express from 'express';
-import path from 'path';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-// Get current file path in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const express = require('express');
+const path = require('path');
+const cors = require('cors');
+const dotenv = require('dotenv');
 
 // Load environment variables if .env exists
 dotenv.config();
@@ -18,31 +12,8 @@ const port = process.env.PORT || 3000;
 // Enable CORS
 app.use(cors());
 
-// Serve JavaScript files with correct MIME type
-app.get('*.js', (req, res, next) => {
-    res.set('Content-Type', 'application/javascript');
-    next();
-});
-
 // Serve static files
-app.use(express.static(path.join(__dirname, '.'), {
-    setHeaders: (res, filePath) => {
-        if (filePath.endsWith('.js')) {
-            res.set('Content-Type', 'application/javascript');
-        }
-    }
-}));
-
-// Handle specific routes for config files
-app.get('/config.js', (req, res) => {
-    res.set('Content-Type', 'application/javascript');
-    res.sendFile(path.join(__dirname, 'config.js'));
-});
-
-app.get('/config/firebase.js', (req, res) => {
-    res.set('Content-Type', 'application/javascript');
-    res.sendFile(path.join(__dirname, 'config/firebase.js'));
-});
+app.use(express.static(path.join(__dirname, '.')));
 
 // Optional route to check current environment variables (for debugging)
 app.get('/env-check', (req, res) => {
@@ -55,7 +26,7 @@ app.get('/env-check', (req, res) => {
     });
 });
 
-// Handle all other routes by serving index.html
+// Handle all routes by serving index.html
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
